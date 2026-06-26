@@ -3,31 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luna Azul | Pijamas</title>
+<title>Luna Azul</title>
 
 <style>
 body {
+    font-family: Arial;
     margin: 0;
-    font-family: Arial, sans-serif;
     background: #f4f8fb;
 }
 
 /* HEADER */
 header {
-    background: linear-gradient(90deg, #a8c9f0, #d6e6f9);
     text-align: center;
     padding: 20px;
+    background: #a8c9f0;
 }
 
-/* BOTONES CATEGORÍAS */
+/* CATEGORÍAS */
 .categorias {
     text-align: center;
-    padding: 10px;
+    margin: 10px;
 }
 
 .categorias button {
-    margin: 5px;
     padding: 10px;
+    margin: 5px;
     border: none;
     background: #1c3d5a;
     color: white;
@@ -37,48 +37,41 @@ header {
 /* PRODUCTOS */
 .productos {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    padding: 15px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    padding: 10px;
 }
 
 .card {
     background: white;
     border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
+    padding: 10px;
 }
 
 .card img {
     width: 100%;
-    height: 200px;
+    height: 150px;
     object-fit: cover;
 }
 
-.card-content {
-    padding: 10px;
-    text-align: center;
+/* FORMULARIO */
+.formulario {
+    padding: 20px;
+    background: white;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
 }
 
 .btn {
     background: #25D366;
     color: white;
-    padding: 8px;
+    padding: 10px;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* WHATSAPP */
-.whatsapp {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #25D366;
-    color: white;
-    padding: 15px;
-    border-radius: 50%;
-    text-decoration: none;
+    width: 100%;
 }
 </style>
 </head>
@@ -87,10 +80,9 @@ header {
 
 <header>
     <h1>LUNA AZUL</h1>
-    <p>Catálogo de pijamas</p>
+    <p>Pijamas para toda la familia</p>
 </header>
 
-<!-- CATEGORÍAS -->
 <div class="categorias">
     <button onclick="filtrar('todas')">Todas</button>
     <button onclick="filtrar('damas')">Damas</button>
@@ -101,101 +93,83 @@ header {
 
 <section class="productos" id="productos"></section>
 
-<a class="whatsapp" href="https://wa.me/573194474235">💬</a>
+<!-- FORMULARIO CLIENTE -->
+<div class="formulario">
+    <h2>Datos de entrega</h2>
+
+    <input id="nombre" placeholder="Nombre completo">
+    <input id="telefono" placeholder="Teléfono">
+    <input id="ciudad" placeholder="Ciudad">
+    <input id="direccion" placeholder="Dirección">
+
+    <select id="pago">
+        <option>Pago contra entrega</option>
+        <option>Transferencia</option>
+        <option>Nequi</option>
+        <option>Daviplata</option>
+    </select>
+
+    <button class="btn" onclick="enviarPedido()">Finalizar compra</button>
+</div>
 
 <script>
 
+let carrito = [];
+
 const productos = [
-    {
-        nombre: "Pijama Azul Mujer",
-        precio: 60000,
-        categoria: "damas",
-        imagen: "https://via.placeholder.com/300x200?text=Damas"
-    },
-    {
-        nombre: "Pijama Hombre Gris",
-        precio: 65000,
-        categoria: "caballeros",
-        imagen: "https://via.placeholder.com/300x200?text=Caballeros"
-    },
-    {
-        nombre: "Pijama Niña Rosa",
-        precio: 55000,
-        categoria: "niñas",
-        imagen: "https://via.placeholder.com/300x200?text=Niña"
-    },
-    {
-        nombre: "Pijama Niño Azul",
-        precio: 55000,
-        categoria: "niños",
-        imagen: "https://via.placeholder.com/300x200?text=Niño"
-    }
+    {nombre:"Pijama Dama 1", precio:60000, cat:"damas", img:"https://picsum.photos/200?1"},
+    {nombre:"Pijama Dama 2", precio:62000, cat:"damas", img:"https://picsum.photos/200?2"},
+    {nombre:"Pijama Dama 3", precio:65000, cat:"damas", img:"https://picsum.photos/200?3"},
+    {nombre:"Pijama Dama 4", precio:68000, cat:"damas", img:"https://picsum.photos/200?4"},
+    {nombre:"Pijama Dama 5", precio:70000, cat:"damas", img:"https://picsum.photos/200?5"},
+
+    {nombre:"Pijama Hombre 1", precio:65000, cat:"caballeros", img:"https://picsum.photos/200?6"},
+    {nombre:"Pijama Niño 1", precio:50000, cat:"niños", img:"https://picsum.photos/200?7"},
+    {nombre:"Pijama Niña 1", precio:50000, cat:"niñas", img:"https://picsum.photos/200?8"}
 ];
 
-const contenedor = document.getElementById("productos");
+function mostrar(lista){
+    const cont = document.getElementById("productos");
+    cont.innerHTML = "";
 
-function mostrar(lista) {
-    contenedor.innerHTML = "";
+    lista.forEach((p,i)=>{
+        cont.innerHTML += `
+        <div class="card">
+            <img src="${p.img}">
+            <h4>${p.nombre}</h4>
+            <p>$${p.precio}</p>
 
-    lista.forEach((p, i) => {
-        const card = document.createElement("div");
-
-        card.className = "card";
-        card.innerHTML = `
-        <img src="${p.imagen}">
-        <div class="card-content">
-            <h3>${p.nombre}</h3>
-            <p>$${p.precio.toLocaleString()}</p>
-
-            <label>Talla:</label>
             <select id="talla${i}">
                 <option>S</option>
                 <option>M</option>
                 <option>L</option>
-                <option>XL</option>
             </select>
 
-            <br><br>
+            <input type="number" id="cant${i}" value="1">
 
-            <label>Cantidad:</label>
-            <input type="number" id="cantidad${i}" value="1" min="1" style="width:60px;">
-
-            <br><br>
-
-            <button class="btn" onclick="comprar(${i})">Comprar</button>
-        </div>
-        `;
-
-        contenedor.appendChild(card);
+            <button onclick="agregar(${i})">Agregar</button>
+        </div>`;
     });
 }
 
-function filtrar(cat) {
-    if(cat === "todas") {
-        mostrar(productos);
-    } else {
-        mostrar(productos.filter(p => p.categoria === cat));
-    }
+function filtrar(cat){
+    if(cat==="todas") mostrar(productos);
+    else mostrar(productos.filter(p=>p.cat===cat));
 }
 
-function comprar(i) {
-    const p = productos[i];
-    const talla = document.getElementById("talla"+i).value;
-    const cantidad = document.getElementById("cantidad"+i).value;
+function agregar(i){
+    let p = productos[i];
+    let talla = document.getElementById("talla"+i).value;
+    let cant = document.getElementById("cant"+i).value;
 
-    const mensaje = `Hola, quiero comprar:
-Producto: ${p.nombre}
-Talla: ${talla}
-Cantidad: ${cantidad}`;
+    carrito.push({
+        nombre:p.nombre,
+        talla:talla,
+        cantidad:cant
+    });
 
-    window.open("https://wa.me/573194474235?text=" + encodeURIComponent(mensaje));
+    alert("Producto agregado ✅");
 }
 
-// Mostrar todo al inicio
-mostrar(productos);
+function enviarPedido(){
 
-</script>
-
-</body>
-</html>
-``
