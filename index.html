@@ -19,36 +19,34 @@ header {
     padding: 20px;
 }
 
-header h1 {
-    margin: 0;
-    color: #1c3d5a;
-}
-
-/* HERO */
-.hero {
+/* BOTONES CATEGORÍAS */
+.categorias {
     text-align: center;
-    padding: 20px;
+    padding: 10px;
 }
 
-.hero img {
-    width: 90%;
-    max-width: 400px;
-    border-radius: 10px;
+.categorias button {
+    margin: 5px;
+    padding: 10px;
+    border: none;
+    background: #1c3d5a;
+    color: white;
+    border-radius: 5px;
 }
 
 /* PRODUCTOS */
 .productos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    gap: 15px;
+    padding: 15px;
 }
 
 .card {
     background: white;
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
 
 .card img {
@@ -58,39 +56,17 @@ header h1 {
 }
 
 .card-content {
-    padding: 15px;
+    padding: 10px;
     text-align: center;
-}
-
-.price {
-    font-weight: bold;
 }
 
 .btn {
-    display: inline-block;
-    margin-top: 10px;
     background: #25D366;
     color: white;
-    padding: 10px;
+    padding: 8px;
+    border: none;
     border-radius: 5px;
-    text-decoration: none;
-}
-
-/* BENEFICIOS */
-.beneficios {
-    padding: 20px;
-    text-align: center;
-}
-
-.beneficios h2 {
-    color: #1c3d5a;
-}
-
-/* FOOTER */
-footer {
-    text-align: center;
-    background: #a8c9f0;
-    padding: 15px;
+    cursor: pointer;
 }
 
 /* WHATSAPP */
@@ -105,33 +81,25 @@ footer {
     text-decoration: none;
 }
 </style>
-
 </head>
 
 <body>
 
 <header>
     <h1>LUNA AZUL</h1>
-    <p>Pijamas cómodas para tu descanso</p>
+    <p>Catálogo de pijamas</p>
 </header>
 
-<section class="hero">
-    <h2>Catálogo</h2>
-    https://via.placeholder.com/400x250?text=Luna+Azul
-</section>
+<!-- CATEGORÍAS -->
+<div class="categorias">
+    <button onclick="filtrar('todas')">Todas</button>
+    <button onclick="filtrar('damas')">Damas</button>
+    <button onclick="filtrar('caballeros')">Caballeros</button>
+    <button onclick="filtrar('niñas')">Niñas</button>
+    <button onclick="filtrar('niños')">Niños</button>
+</div>
 
 <section class="productos" id="productos"></section>
-
-<section class="beneficios">
-    <h2>¿Por qué elegirnos?</h2>
-    <p>✅ Telas suaves y cómodas</p>
-    <p>✅ Diseños modernos</p>
-    <p>✅ Compra rápida por WhatsApp</p>
-</section>
-
-<footer>
-    <p>📱 3194474235 | Instagram @luna_azulpijamas</p>
-</footer>
 
 <a class="whatsapp" href="https://wa.me/573194474235">💬</a>
 
@@ -139,43 +107,95 @@ footer {
 
 const productos = [
     {
-        nombre: "Pijama Azul",
+        nombre: "Pijama Azul Mujer",
         precio: 60000,
-        imagen: "https://via.placeholder.com/300x200?text=Pijama+1"
+        categoria: "damas",
+        imagen: "https://via.placeholder.com/300x200?text=Damas"
     },
     {
-        nombre: "Pijama Nube",
+        nombre: "Pijama Hombre Gris",
         precio: 65000,
-        imagen: "https://via.placeholder.com/300x200?text=Pijama+2"
+        categoria: "caballeros",
+        imagen: "https://via.placeholder.com/300x200?text=Caballeros"
     },
     {
-        nombre: "Pijama Estrella",
-        precio: 70000,
-        imagen: "https://via.placeholder.com/300x200?text=Pijama+3"
+        nombre: "Pijama Niña Rosa",
+        precio: 55000,
+        categoria: "niñas",
+        imagen: "https://via.placeholder.com/300x200?text=Niña"
+    },
+    {
+        nombre: "Pijama Niño Azul",
+        precio: 55000,
+        categoria: "niños",
+        imagen: "https://via.placeholder.com/300x200?text=Niño"
     }
 ];
 
 const contenedor = document.getElementById("productos");
 
-productos.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "card";
+function mostrar(lista) {
+    contenedor.innerHTML = "";
 
-    card.innerHTML = `
+    lista.forEach((p, i) => {
+        const card = document.createElement("div");
+
+        card.className = "card";
+        card.innerHTML = `
         <img src="${p.imagen}">
         <div class="card-content">
             <h3>${p.nombre}</h3>
-            <p class="price">$${p.precio.toLocaleString()}</p>
-            <a class="btn" href="https://wa.me/573194474235?text=Hola quiero comprar ${p.nombre}">
-                Comprar
-            </a>
-        </div>
-    `;
+            <p>$${p.precio.toLocaleString()}</p>
 
-    contenedor.appendChild(card);
-});
+            <label>Talla:</label>
+            <select id="talla${i}">
+                <option>S</option>
+                <option>M</option>
+                <option>L</option>
+                <option>XL</option>
+            </select>
+
+            <br><br>
+
+            <label>Cantidad:</label>
+            <input type="number" id="cantidad${i}" value="1" min="1" style="width:60px;">
+
+            <br><br>
+
+            <button class="btn" onclick="comprar(${i})">Comprar</button>
+        </div>
+        `;
+
+        contenedor.appendChild(card);
+    });
+}
+
+function filtrar(cat) {
+    if(cat === "todas") {
+        mostrar(productos);
+    } else {
+        mostrar(productos.filter(p => p.categoria === cat));
+    }
+}
+
+function comprar(i) {
+    const p = productos[i];
+    const talla = document.getElementById("talla"+i).value;
+    const cantidad = document.getElementById("cantidad"+i).value;
+
+    const mensaje = `Hola, quiero comprar:
+Producto: ${p.nombre}
+Talla: ${talla}
+Cantidad: ${cantidad}`;
+
+    window.open("https://wa.me/573194474235?text=" + encodeURIComponent(mensaje));
+}
+
+// Mostrar todo al inicio
+mostrar(productos);
 
 </script>
 
 </body>
 </html>
+``
